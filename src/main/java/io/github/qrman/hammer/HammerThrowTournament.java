@@ -1,9 +1,12 @@
 package io.github.qrman.hammer;
 
 import com.google.inject.Inject;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.redis.RedisClient;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HammerThrowTournament {
     
@@ -14,13 +17,13 @@ public class HammerThrowTournament {
         this.redisClient = redisClient;
     }
     
-    
-    public void addTournamentPlayer(Player p) {
-        
+    public void addTournamentPlayer(Player p, Handler<AsyncResult<String>> handler) {
+        Map<String, String> hmset = new HashMap<>();
+        hmset.put("name", p.getName());
+        redisClient.hmset("PLAYERS:" + p.getId(), hmset, handler);
     }
 
-    List<Player> registerdPlayer() {
-        return Collections.EMPTY_LIST;
+    public void registerdPlayer(Handler<AsyncResult<JsonArray>> resultHandler) {
+        redisClient.keys("PLAYERS:*", resultHandler);
     }
-    
 }
