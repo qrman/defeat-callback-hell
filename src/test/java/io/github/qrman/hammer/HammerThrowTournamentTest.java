@@ -9,6 +9,7 @@ import io.vertx.ext.unit.junit.RunTestOnContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.redis.RedisClient;
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 import lombok.extern.java.Log;
 import org.junit.After;
 import org.junit.Before;
@@ -42,19 +43,20 @@ public class HammerThrowTournamentTest {
     public void will_register_player(TestContext context) {
         Async async = context.async();
 
-        hammerThrowTournament.addTournamentPlayer(new Player(1000, "Anita Wlodarczyk"), (AsyncResult<String> player1Handler) -> {
-            hammerThrowTournament.addTournamentPlayer(new Player(1001, "Zhang Wenxiu"), (AsyncResult<String> player2Handler) -> {
-                hammerThrowTournament.addTournamentPlayer(new Player(1002, "Alexandra Tavernier"), (AsyncResult<String> player3Handler) -> {
-                    log.info("All players has been added");
-                    hammerThrowTournament.registerdPlayer((AsyncResult<JsonArray> resultHandler) -> {
-                        log.info("Looking for results");
-                        int registerdPlayers = resultHandler.result().size();
-                        context.assertEquals(registerdPlayers, 3, "All Player were registerd");
-                        async.complete();
-                    });
-                });
-            });
-        });
+        CompletableFuture<Void> add_1_Player = hammerThrowTournament.addTournamentPlayer(new Player(1000, "Anita Wlodarczyk"));
+        CompletableFuture<Void> add_2_Player = hammerThrowTournament.addTournamentPlayer(new Player(1001, "Zhang Wenxiu"));;
+        CompletableFuture<Void> add_3_Player = hammerThrowTournament.addTournamentPlayer(new Player(1002, "Alexandra Tavernier"));
+
+        CompletableFuture.allOf(add_1_Player, add_2_Player, add_3_Player)
+          .thenApply((Void t) -> {
+              hammerThrowTournament.registerdPlayer((AsyncResult<JsonArray> resultHandler) -> {
+                  log.info("Looking for results");
+                  int registerdPlayers = resultHandler.result().size();
+                  context.assertEquals(registerdPlayers, 3, "All Player were registerd");
+                  async.complete();
+              });
+              return null;
+          });
     }
 
     @Test
