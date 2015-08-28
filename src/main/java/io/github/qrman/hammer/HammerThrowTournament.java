@@ -2,7 +2,6 @@ package io.github.qrman.hammer;
 
 import com.google.inject.Inject;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.redis.RedisClient;
 import java.util.HashMap;
@@ -29,7 +28,11 @@ public class HammerThrowTournament {
         return promise;
     }
 
-    public void registerdPlayer(Handler<AsyncResult<JsonArray>> resultHandler) {
-        redisClient.keys("PLAYERS:*", resultHandler);
+    public CompletableFuture<Integer> registerdPlayer() {
+        CompletableFuture<Integer> promise = new CompletableFuture<>();
+        redisClient.keys("PLAYERS:*", (AsyncResult<JsonArray> hander) -> {
+            promise.complete(hander.result().size());
+        });
+        return promise;
     }
 }
