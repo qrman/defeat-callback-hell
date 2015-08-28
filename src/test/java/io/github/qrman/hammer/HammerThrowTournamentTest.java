@@ -39,20 +39,14 @@ public class HammerThrowTournamentTest {
     @Test
     public void will_register_player(TestContext context) {
         Async async = context.async();
-
-        hammerThrowTournament.addTournamentPlayer(new Player(1000, "Anita Wlodarczyk"))
-          .thenCompose(v -> hammerThrowTournament.addTournamentPlayer(new Player(1001, "Zhang Wenxiu")))
-          .thenCompose(v -> hammerThrowTournament.addTournamentPlayer(new Player(1002, "Alexandra Tavernier")))
+        hammerThrowTournament.addPlayer(new Player(1000, "Anita Wlodarczyk"))
+          .thenCompose(v -> hammerThrowTournament.addPlayer(new Player(1001, "Zhang Wenxiu")))
+          .thenCompose(v -> hammerThrowTournament.addPlayer(new Player(1002, "Alexandra Tavernier")))
           .thenCompose(v -> hammerThrowTournament.registerdPlayer())
           .thenAccept(numberOfRegisteredPlayer -> {
-              context.assertEquals(numberOfRegisteredPlayer, 3, "All Player were registerd");
+              context.assertEquals(numberOfRegisteredPlayer, 3, "All Players were registered");
               async.complete();
           });
-    }
-
-    @Test
-    public void will_register_player_throw() {
-        //TODO
     }
 
     @After

@@ -1,6 +1,5 @@
 package io.github.qrman.hammer;
 
-import com.google.inject.Inject;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.json.JsonArray;
 import io.vertx.redis.RedisClient;
@@ -12,12 +11,11 @@ public class HammerThrowTournament {
 
     private final RedisClient redisClient;
 
-    @Inject
     public HammerThrowTournament(RedisClient redisClient) {
         this.redisClient = redisClient;
     }
 
-    public CompletableFuture<Void> addTournamentPlayer(Player p) {
+    public CompletableFuture<Void> addPlayer(Player p) {
         CompletableFuture<Void> promise = new CompletableFuture<>();
         Map<String, String> hmset = new HashMap<>();
         hmset.put("name", p.getName());
